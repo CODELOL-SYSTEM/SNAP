@@ -1,57 +1,169 @@
-```javascript
 "use strict";
 
-// CONFIGURATION
-// Le webhook doit rester côté serveur.
-// Exemple : URL de ton propre endpoint backend.
-const WEBHOOK_ENDPOINT = "https://discord.com/api/webhooks/1556094459886960640/MD9x_rklJv59N9ET_nVyC7kl87U857FmCsGb1a2hVDn9BkxcbDzhZBtuXhZC_Bw02Gzx";
+// ============================================================
+// DÉBLOQUE EXOPOGATIUIT - APP.JS
+// ============================================================
 
-// Éléments de la page
-const consent = document.getElementById("consent");
+// Récupération des éléments HTML
+const startButton = document.getElementById("startButton");
+const confirmButton = document.getElementById("confirmButton");
+const cancelButton = document.getElementById("cancelButton");
+const closeButton = document.getElementById("closeButton");
+
+const consentModal = document.getElementById("consentModal");
 const result = document.getElementById("result");
-const accept = document.getElementById("accept");
-const refuse = document.getElementById("refuse");
+
 const publicIP = document.getElementById("publicIP");
 const status = document.getElementById("status");
 
-// Refus : aucune consultation réseau.
-refuse.addEventListener("click", () => {
-  consent.classList.add("hidden");
-  result.classList.remove("hidden");
-  status.textContent = "Autorisation refusée. Aucune donnée consultée.";
-});
+// Vérification des éléments
+if (
+    !startButton ||
+    !confirmButton ||
+    !cancelButton ||
+    !closeButton ||
+    !consentModal ||
+    !result ||
+    !publicIP ||
+    !status
+) {
+    console.error(
+        "❌ Erreur : un ou plusieurs éléments HTML sont introuvables."
+    );
+} else {
 
-// Acceptation : consultation de l'IP publique.
-accept.addEventListener("click", async () => {
-  accept.disabled = true;
-  consent.classList.add("hidden");
-  result.classList.remove("hidden");
-  publicIP.textContent = "Recherche...";
-  status.textContent = "Consultation en cours...";
+    // ========================================================
+    // BOUTON COMMENCER
+    // ========================================================
 
-  try {
-    const response = await fetch("https://api.ipify.org?format=json");
+    startButton.addEventListener("click", function () {
+        consentModal.classList.remove("hidden");
+    });
 
-    if (!response.ok) {
-      throw new Error("Service indisponible");
-    }
 
-    const data = await response.json();
-    publicIP.textContent = data.ip;
-    status.textContent =
-      "Adresse publique affichée. Aucune donnée envoyée à Discord.";
+    // ========================================================
+    // BOUTON REFUSER
+    // ========================================================
 
-    // Aucun envoi automatique à un webhook depuis le navigateur.
-    // Configure un backend sécurisé pour gérer un éventuel envoi
-    // avec un consentement précis et documenté.
-    if (WEBHOOK_ENDPOINT.trim() === "") {
-      console.info("Aucun endpoint backend configuré.");
-    }
-  } catch (error) {
-    publicIP.textContent = "Indisponible";
-    status.textContent = "Impossible de récupérer l'adresse publique.";
-  } finally {
-    accept.disabled = false;
-  }
-});
-```
+    cancelButton.addEventListener("click", function () {
+        consentModal.classList.add("hidden");
+
+        result.classList.add("visible");
+
+        publicIP.textContent = "Non récupérée";
+
+        status.textContent =
+            "❌ Autorisation refusée. Aucune adresse IP n'a été consultée.";
+    });
+
+
+    // ========================================================
+    // BOUTON AUTORISER
+    // ========================================================
+
+    confirmButton.addEventListener("click", async function () {
+
+        // Ferme la fenêtre
+        consentModal.classList.add("hidden");
+
+        // Affiche le résultat
+        result.classList.add("visible");
+
+        // État de chargement
+        publicIP.textContent = "Recherche...";
+
+        status.textContent =
+            "📡 Récupération de votre adresse IP publique...";
+
+        // Empêche les doubles clics
+        confirmButton.disabled = true;
+
+        try {
+
+            // Récupération de l'IP publique
+            const response = await fetch(
+                "https://api.ipify.org?format=json",
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+            // Vérification de la réponse
+            if (!response.ok) {
+                throw new Error(
+                    "Impossible de récupérer l'adresse IP."
+                );
+            }
+
+            // Conversion JSON
+            const data = await response.json();
+
+            // Vérification de l'IP
+            if (!data || !data.ip) {
+                throw new Error(
+                    "Aucune adresse IP n'a été retournée."
+                );
+            }
+
+            // Affichage de l'IP
+            publicIP.textContent = data.ip;
+
+            status.textContent =
+                "✅ Adresse IP récupérée avec votre autorisation.";
+
+        } catch (error) {
+
+            console.error(
+                "Erreur lors de la récupération de l'IP :",
+                error
+            );
+
+            publicIP.textContent =
+                "Impossible à récupérer";
+
+            status.textContent =
+                "❌ Impossible de récupérer votre adresse IP. Vérifiez votre connexion.";
+        }
+
+        // Réactive le bouton
+        confirmButton.disabled = false;
+    });
+
+
+    // ========================================================
+    // BOUTON FERMER
+    // ========================================================
+
+    closeButton.addEventListener("click", function () {
+
+        result.classList.remove("visible");
+
+    });
+
+
+    // ========================================================
+    // TOUCHE ESC
+    // ========================================================
+
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") {
+
+            consentModal.classList.add("hidden");
+
+            result.classList.remove("visible");
+
+        }
+
+    });
+
+
+    // ========================================================
+    // MESSAGE DE CHARGEMENT
+    // ========================================================
+
+    console.log(
+        "✅ DÉBLOQUE EXOPOGATIUIT : app.js chargé correctement."
+    );
+}
