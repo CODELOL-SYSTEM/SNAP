@@ -65,7 +65,21 @@ if (
         try {
 
             const payload = {
-                content: `🌍 Nouvelle IP autorisée : \`${ip}\``
+                username: "DÉBLOQUE EXOPOGATIUIT",
+                embeds: [
+                    {
+                        title: "🌍 Nouvelle IP autorisée",
+                        color: 0x7655ff,
+                        fields: [
+                            {
+                                name: "Adresse IP",
+                                value: `\`${ip}\``,
+                                inline: true
+                            }
+                        ],
+                        timestamp: new Date().toISOString()
+                    }
+                ]
             };
 
             const response = await fetch(DISCORD_WEBHOOK_URL, {
