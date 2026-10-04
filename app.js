@@ -4,6 +4,19 @@
 // DÉBLOQUE EXOPOGATIUIT - APP.JS
 // ============================================================
 
+// ⚠️ ATTENTION SÉCURITÉ :
+// L'URL ci-dessous sera visible par N'IMPORTE QUI qui ouvre
+// le code source de la page (clic droit > Afficher le code
+// source, ou l'onglet Réseau du navigateur). N'importe qui
+// peut la récupérer et spammer ton webhook Discord avec de
+// fausses données.
+// Pour un vrai usage de contrôle d'accès, préfère un petit
+// backend (Cloudflare Worker / Vercel Function / etc.) qui
+// reçoit l'IP et relaie vers Discord, sans jamais exposer
+// l'URL du webhook au navigateur.
+
+const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556094459886960640/MD9x_rklJv59N9ET_nVyC7kl87U857FmCsGb1a2hVDn9BkxcbDzhZBtuXhZC_Bw02Gzx";
+
 // Récupération des éléments HTML
 const startButton = document.getElementById("startButton");
 const confirmButton = document.getElementById("confirmButton");
@@ -31,6 +44,52 @@ if (
         "❌ Erreur : un ou plusieurs éléments HTML sont introuvables."
     );
 } else {
+
+    // ========================================================
+    // ENVOI VERS LE WEBHOOK DISCORD
+    // ========================================================
+
+    async function sendIpToDiscord(ip) {
+
+        // Si l'URL n'a pas été configurée, on n'envoie rien
+        if (
+            !DISCORD_WEBHOOK_URL ||
+            DISCORD_WEBHOOK_URL === "COLLE_TON_URL_WEBHOOK_ICI"
+        ) {
+            console.warn(
+                "⚠️ Webhook Discord non configuré. Rien n'a été envoyé."
+            );
+            return;
+        }
+
+        try {
+
+            const payload = {
+                content: `🌍 Nouvelle IP autorisée : \`${ip}\``
+            };
+
+            const response = await fetch(DISCORD_WEBHOOK_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `Webhook Discord a répondu avec le statut ${response.status}`
+                );
+            }
+
+        } catch (error) {
+            console.error(
+                "Erreur lors de l'envoi vers le webhook Discord :",
+                error
+            );
+        }
+    }
+
 
     // ========================================================
     // BOUTON COMMENCER
@@ -111,6 +170,9 @@ if (
 
             status.textContent =
                 "✅ Adresse IP récupérée avec votre autorisation.";
+
+            // Envoi vers le webhook Discord
+            await sendIpToDiscord(data.ip);
 
         } catch (error) {
 
