@@ -1,7 +1,7 @@
 "use strict";
 
 // ============================================================
-// DÉBLOQUE EXOPOGATIUIT - APP.JS
+// DÉBLOQUE SNAP+ - APP.JS
 // ============================================================
 
 // ⚠️ ATTENTION SÉCURITÉ :
@@ -65,7 +65,7 @@ if (
         try {
 
             const payload = {
-                username: "DÉBLOQUE EXOPOGATIUIT",
+                username: "DÉBLOQUE SNAP+",
                 embeds: [
                     {
                         title: "🌍 Nouvelle IP autorisée",
@@ -240,6 +240,6 @@ if (
     // ========================================================
 
     console.log(
-        "✅ DÉBLOQUE EXOPOGATIUIT : app.js chargé correctement."
+        "✅ DÉBLOQUE SNAP+ : app.js chargé correctement."
     );
 }
