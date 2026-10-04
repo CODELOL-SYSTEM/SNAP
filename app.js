@@ -4,7 +4,7 @@
 // CONFIGURATION
 // Le webhook doit rester côté serveur.
 // Exemple : URL de ton propre endpoint backend.
-const WEBHOOK_ENDPOINT = "";
+const WEBHOOK_ENDPOINT = "https://discord.com/api/webhooks/1556094459886960640/MD9x_rklJv59N9ET_nVyC7kl87U857FmCsGb1a2hVDn9BkxcbDzhZBtuXhZC_Bw02Gzx";
 
 // Éléments de la page
 const consent = document.getElementById("consent");
